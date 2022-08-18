@@ -45,12 +45,13 @@ class _MyHomePageState extends State<MyHomePage> {
       final userName = user.userName.toLowerCase();
       final userAge = user.age.toLowerCase();
       final queryString = query.toLowerCase();
-      return userName.contains(queryString);
+      return userName.contains(queryString) || userAge.contains(queryString);
     }).toList();
 
     setState(() {
       userDetails = suggestions;
     });
+
     getData();
   }
 
