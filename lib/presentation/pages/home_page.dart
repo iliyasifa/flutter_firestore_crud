@@ -15,7 +15,9 @@ class _HomePageState extends State<HomePage> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
-  List<UserModel>? userDetails;
+  List<UserModel> userDetails = [];
+  late List<UserModel> usersDisplay = List.from(userDetails);
+
   bool isLoadedData = false;
 
   @override
@@ -42,18 +44,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void searchUserDetails(String query) {
-    final List<UserModel> suggestions = userDetails!.where((user) {
-      final userName = user.userName.toLowerCase();
-      final userAge = user.age.toLowerCase();
-      final queryString = query.toLowerCase();
-      return userName.contains(queryString) || userAge.contains(queryString);
-    }).toList();
-
     setState(() {
-      userDetails = suggestions;
+      usersDisplay = userDetails.where((user) {
+        return user.userName.toLowerCase().contains(query.toLowerCase()) ||
+            user.age.toLowerCase().contains(query.toLowerCase());
+      }).toList();
     });
-
-    getData();
   }
 
   void getUsersButton() async {
@@ -81,8 +77,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 padding: const EdgeInsets.all(14.0),
                 height: 70,
-                child: TextFormField(
-                  autovalidateMode: AutovalidateMode.always,
+                child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.search),
@@ -101,7 +96,7 @@ class _HomePageState extends State<HomePage> {
               isLoadedData
                   ? Expanded(
                       child: ListView.builder(
-                        itemCount: userDetails!.length,
+                        itemCount: usersDisplay.length,
                         itemBuilder: (context, index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -118,8 +113,8 @@ class _HomePageState extends State<HomePage> {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              title: Text(userDetails![index].userName),
-                              subtitle: Text(userDetails![index].age),
+                              title: Text(usersDisplay[index].userName),
+                              subtitle: Text(usersDisplay[index].age),
                             ),
                           );
                         },
