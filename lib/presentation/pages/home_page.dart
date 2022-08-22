@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<List<UserModel>?> getData() async {
+  Future<List<UserModel>> getData() async {
     final userCollection = FirebaseFirestore.instance.collection("users");
     final data = await userCollection.get();
     final docList = data.docs;
