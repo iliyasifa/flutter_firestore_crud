@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firestore_crud/data/models/user_model.dart';
+
+import '../../services/models/user_model.dart';
 import '../widgets/create_user.dart';
 
 class HomePage extends StatefulWidget {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../data/models/user_model.dart';
-import '../../../data/remote_data_source/firestore_helper.dart';
+import '../../services/models/user_model.dart';
+import '../../services/remote_data_source/firestore_helper.dart';
 
 class CreateWidget extends StatelessWidget {
   final TextEditingController userNameController;
