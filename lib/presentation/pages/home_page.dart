@@ -31,13 +31,14 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<void> getData() async {
+  Future<List<UserModel>?> getData() async {
     final userCollection = FirebaseFirestore.instance.collection("users");
     final data = await userCollection.get();
     final docList = data.docs;
     final users = docList.map((e) => UserModel.fromSnapshot(e)).toList();
 
     userDetails = users;
+    return userDetails;
   }
 
   void searchUserDetails(String query) {
