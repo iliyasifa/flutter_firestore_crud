@@ -14,12 +14,8 @@ class _HomePageState extends State<HomePage> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
-  FocusNode ageFocusNode = FocusNode();
-  FocusNode createButtonFocusNode = FocusNode();
-  String? queryString;
   List<UserModel>? userDetails;
-
-  bool isLoadedData = true;
+  bool isLoadedData = false;
 
   @override
   void initState() {
@@ -61,7 +57,7 @@ class _HomePageState extends State<HomePage> {
   void getUsersButton() async {
     await getData();
     setState(() {
-      isLoadedData = false;
+      isLoadedData = true;
     });
   }
 
@@ -101,11 +97,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 10),
               isLoadedData
-                  ? ElevatedButton(
-                      onPressed: getUsersButton,
-                      child: const Text('get data'),
-                    )
-                  : Expanded(
+                  ? Expanded(
                       child: ListView.builder(
                         itemCount: userDetails!.length,
                         itemBuilder: (context, index) {
@@ -130,7 +122,11 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-                    ),
+                    )
+                  : ElevatedButton(
+                      onPressed: getUsersButton,
+                      child: const Text('get data'),
+                    )
             ],
           ),
         ),
