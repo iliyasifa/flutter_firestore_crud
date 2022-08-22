@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../services/models/user_model.dart';
+import '../widgets/create_user.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     return userDetails;
   }
 
-  void searchUserDetails(String query) {
+  void updateUsers(String query) {
     setState(() {
       usersDisplay = userDetails.where((user) {
         return user.userName.toLowerCase().contains(query.toLowerCase()) ||
@@ -68,10 +69,10 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              // CreateWidget(
-              //   userNameController: userNameController,
-              //   ageController: ageController,
-              // ),
+              CreateWidget(
+                userNameController: userNameController,
+                ageController: ageController,
+              ),
               Container(
                 padding: const EdgeInsets.all(14.0),
                 height: 70,
@@ -87,35 +88,38 @@ class _HomePageState extends State<HomePage> {
                     hintText: 'Search by username',
                     contentPadding: const EdgeInsets.only(top: 20),
                   ),
-                  onChanged: searchUserDetails,
+                  onChanged: updateUsers,
                 ),
               ),
               const SizedBox(height: 10),
               isLoadedData
                   ? Expanded(
-                      child: ListView.builder(
-                        itemCount: usersDisplay.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            margin: const EdgeInsets.symmetric(vertical: 5),
-                            child: ListTile(
-                              leading: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  color: Colors.deepPurple,
-                                  shape: BoxShape.circle,
-                                ),
+                      child: RefreshIndicator(
+                        onRefresh: getData,
+                        child: ListView.builder(
+                          itemCount: usersDisplay.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              title: Text(usersDisplay[index].userName),
-                              subtitle: Text(usersDisplay[index].age),
-                            ),
-                          );
-                        },
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              child: ListTile(
+                                leading: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.deepPurple,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                title: Text(usersDisplay[index].userName),
+                                subtitle: Text(usersDisplay[index].age),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     )
                   : ElevatedButton(
