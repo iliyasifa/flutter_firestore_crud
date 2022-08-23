@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../services/models/user_model.dart';
-import '../widgets/create_user.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,11 +16,10 @@ class _HomePageState extends State<HomePage> {
   List<UserModel> userDetails = [];
   late List<UserModel> usersDisplay = List.from(userDetails);
 
-  bool isLoadedData = false;
-
   @override
   void initState() {
     super.initState();
+    getData();
   }
 
   @override
@@ -32,14 +30,15 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<List<UserModel>> getData() async {
+  Future<void> getData() async {
     final userCollection = FirebaseFirestore.instance.collection("users");
     final data = await userCollection.get();
     final docList = data.docs;
     final users = docList.map((e) => UserModel.fromSnapshot(e)).toList();
-
-    userDetails = users;
-    return userDetails;
+    setState(() {
+      userDetails = users;
+      usersDisplay = users;
+    });
   }
 
   void updateUsers(String query) {
@@ -48,13 +47,6 @@ class _HomePageState extends State<HomePage> {
         return user.userName.toLowerCase().contains(query.toLowerCase()) ||
             user.age.toLowerCase().contains(query.toLowerCase());
       }).toList();
-    });
-  }
-
-  void getUsersButton() async {
-    await getData();
-    setState(() {
-      isLoadedData = true;
     });
   }
 
@@ -69,10 +61,10 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              CreateWidget(
-                userNameController: userNameController,
-                ageController: ageController,
-              ),
+              // CreateWidget(
+              //   userNameController: userNameController,
+              //   ageController: ageController,
+              // ),
               Container(
                 padding: const EdgeInsets.all(14.0),
                 height: 70,
@@ -92,40 +84,35 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 10),
-              isLoadedData
-                  ? Expanded(
-                      child: RefreshIndicator(
-                        onRefresh: getData,
-                        child: ListView.builder(
-                          itemCount: usersDisplay.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              margin: const EdgeInsets.symmetric(vertical: 5),
-                              child: ListTile(
-                                leading: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.deepPurple,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                title: Text(usersDisplay[index].userName),
-                                subtitle: Text(usersDisplay[index].age),
-                              ),
-                            );
-                          },
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: getData,
+                  child: ListView.builder(
+                    itemCount: usersDisplay.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                      ),
-                    )
-                  : ElevatedButton(
-                      onPressed: getUsersButton,
-                      child: const Text('get data'),
-                    )
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: ListTile(
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                              color: Colors.deepPurple,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          title: Text(usersDisplay[index].userName),
+                          subtitle: Text(usersDisplay[index].age),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
             ],
           ),
         ),
